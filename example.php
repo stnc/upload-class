@@ -1,31 +1,28 @@
-
 <?php
 include('uploader.php');
-
 
 $file_size='2000000';
   $file_type='jpg,gif,png';
  $path='uploads';
  
-//echo count($_FILES['uploadPic']['name']);
-//var_dump ($_FILES['uploadPic']);
 
 
 $input_names =array();
 $input_names=$_FILES['uploadPic'];
 
-		$Uploader = & new stnc_file_upload();
-		$Uploader->name_format ('st_','_nc');
-		$Uploader->picture_control_value=true;
-		$Uploader->uploader_set($input_names, $path, $file_type,$file_size);
+$Uploader = & new stnc_file_upload();
+$Uploader->name_format ('st_','_nc');// upload olayına önek ve sonek vermek içindir
+$Uploader->picture_control_value=true;//resimin gerçek olup olmadığını kontrol eçindir varsayılan true değeri gonderiri
+$Uploader->uploader_set($input_names, $path, $file_type,$file_size);//çalıştırıcı
 
-//echo count($input_names['name']);
+/*
+echo  $Uploader->result_report(); //rapor hata vss 
+$Uploader->uploaded_files[$i]; //yüklenen dosyaların isimleri
+*/
 
-//echo var_dump($Uploader->uploaded_files);
+//örnek yüklenenlerin isimlerini almak için 
 
-
-
-		/* for ($i = 0; $i < count($input_names['name'][$i]); $i++){
+/* for ($i = 0; $i < count($input_names['name'][$i]); $i++){
 		if ( $Uploader->uploaded) {
 	echo	$Uploader->uploaded_files[$i];
 		} else {
@@ -33,10 +30,6 @@ $input_names=$_FILES['uploadPic'];
 		}
 		}*/
 		
-
-	
-//var_dump($up);
-
 ?>
 
 <form action="" method="post" enctype="multipart/form-data">

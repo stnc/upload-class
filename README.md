@@ -1,4 +1,4 @@
-upload-class
+Stnc upload-class
 ============
 
-stnc php file upload
+Php de upload yapmak için yazdığım bir sınıf  
