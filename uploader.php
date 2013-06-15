@@ -52,12 +52,13 @@ class stnc_file_upload {
 
 
 	/**
-	 * resim kontrol olcakmý
+	 * resim kontrol olcakmi
+	 * security image kontrol
 	 *performans için kasarsa burası iptal edilecek
 	 * @access puplic
 	 * @var boolean
 	 */
-	var $picture_control_value = true;
+	var $picture_control_value = false;
 
 
 	/**
@@ -96,7 +97,7 @@ class stnc_file_upload {
 	var $files = array();
 
 	/**
-	 * error information
+	 * error info
 	 *
 	 * @access puplic
 	 * @var string
@@ -145,15 +146,24 @@ class stnc_file_upload {
 	var $info = NULL;
 
 
+
+	/**
+	 * dosyanın orginal isimde olup olmayagını kontrol eder
+	 *
+	 * @access puplic
+	 * @var boolean
+	 */
+	var $orginal_name=false;
+
 	//languages
-	var $LNG_1 = ' dosya adıyla ';
-	var $LNG_1_1 = ' bu dosya adı ile  ';
-	var $LNG_4 = ' Böyle bir klasor bulunamadı!';
+	var $LNG_1 = ' dosya adiyla ';
+	var $LNG_1_1 = ' bu dosya adi ile  ';
+	var $LNG_4 = ' Böyle bir klasor bulunamadi!';
 	var $LNG_5 = ' klasorun yazma izinlerini kontrol edin!';
 	var $LNG_6 = ' boyutu çok büyük ';
 	var $LNG_7 = ' geçersiz mime type';
-	var $LNG_8 = ' bu uzantı geçersizdir';
-	var $LNG_9 = ' bu bir resim dosyası değildir ';
+	var $LNG_8 = ' bu uzantı gecersizdir';
+	var $LNG_9 = ' bu bir resim dosyası degildir ';
 
 
 
@@ -174,7 +184,7 @@ class stnc_file_upload {
 	 * @param  array $extension_types
 	 */
 	function uploader_set($files, $upload_dir, $extension_types,$size_files) {
-	///	var_dump($files);
+		///	var_dump($files);
 		$this->size_files = $size_files;
 		$this->upload_dir($upload_dir);
 		$this->files($files);
@@ -182,7 +192,7 @@ class stnc_file_upload {
 		$this->size_find();
 		$this->picture_control();
 		$this->upload();
-		
+
 	}
 
 
@@ -234,11 +244,19 @@ class stnc_file_upload {
 	 */
 	function file_name_control($file_name) {
 		$file_ext = $this->file_extension($file_name);
+		$randomize=rand(0001, 9999).'_'.rand(0001, 99999).'_'.rand(0001, 99999);
+		if ($this->orginal_name==false){
+			if (file_exists($this -> upload_dir.'/'.$file_name)) //owerreat ozelliği
+				$result = $this->_prefix.$randomize.$this->suffix_.'.'.$file_ext;
+			else
+			 $result = $this->_prefix.$randomize.$this->suffix_.'.'.$file_ext;
+		}
+		else {
+			exit ('deneme');
 
-		if (file_exists($this -> upload_dir.'/'.$file_name))
-			$result = $this->_prefix.rand(0001, 9999).'_'.rand(0001, 99999).'_'.rand(0001, 99999).$this->suffix_.'.'.$file_ext;
-		else
-			 $result = $this->_prefix.rand(0001, 99).'_'.rand(0001, 999).'_'.rand(0001, 999).$this->suffix_.'.'.$file_ext;
+		}
+
+
 
 		return $result;
 	}
@@ -253,7 +271,7 @@ class stnc_file_upload {
 	 */
 	function files($files) {
 		//var_dump(($files));
-	//	echo count($files['name']);
+		//	echo count($files['name']);
 		if ($files) {
 			for ($i = 0; $i < count($files['name']); $i++) {
 				if (!empty($files['name'][$i])) {
@@ -280,17 +298,17 @@ class stnc_file_upload {
 	function size_find() {
 		if (!$this->error) {
 			for ($i = 0; $i < count($this->files['tmp_name']); $i++) {
-				/*	
-			echo $file_size1 = $this->all2kbytes($this->size_files);
-			echo '<br>';
-			echo $file_size2 = $this->all2kbytes($this->files['size'][$i]);
+				/*
+				 echo $file_size1 = $this->all2kbytes($this->size_files);
+				echo '<br>';
+				echo $file_size2 = $this->all2kbytes($this->files['size'][$i]);
 				$this->size_compare( $file_size2, $file_size1, $this->files['name'][$i]);
-			*/	
+				*/
 				$size= $this->files['size'][$i];
 				$file=$this->files['name'][$i];
 				if(   $size > $this->size_files ){
-					   $this->error .= $file.$this->LNG_6;
-				}	
+					$this->error .= $file.$this->LNG_6;
+				}
 			}
 		}
 	}
@@ -308,7 +326,7 @@ class stnc_file_upload {
 	 */
 	function is_file_extension($extension_types) {
 		$extension_types = explode(',', $extension_types);
-	
+
 		if (!$this->error) {
 			for ($i = 0; $i < count($this->files['tmp_name']); $i++) {
 
@@ -334,7 +352,7 @@ class stnc_file_upload {
 			for ($i = 0; $i < count($this->files['tmp_name']); $i++) {
 				if (in_array($this->files['type'][$i], $extension_types_picture)) {
 
-//imagecreatefromstring  bu hata veriyor kontrol edilecek 
+					//imagecreatefromstring  bu hata veriyor kontrol edilecek
 					if (extension_loaded('gd') && !imagecreatefromstring(file_get_contents($this->files['tmp_name'][$i])))
 
 						$this->error .= $this->files['name'][$i].$this->LNG_9;
@@ -372,7 +390,8 @@ class stnc_file_upload {
 	 * @param string $suffix_
 	  
 	 */
-	function name_format(  $_prefix, $suffix_) {
+	function name_format( $val, $_prefix, $suffix_) {
+		$this->orginal_name = $val;
 		$this->suffix_ = $suffix_;
 		$this->_prefix = $_prefix;
 	}
