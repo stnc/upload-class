@@ -11,7 +11,16 @@ $input_names =array();
 $input_names=$_FILES['uploadPic'];
 
 $Uploader = & new stnc_file_upload();
-$Uploader->name_format (true,'st_','_nc');// upload olayına önek ve sonek vermek içindir
+
+/*
+ * eğer true ise dosya orginal ismi ile kaydedilir
+* false verirseniz dosya yeniden rastgele isimlendirilir onceden aynı isimde dosya varsa üzerine yazar 
+* önemli !false ise onek ve sonek de aktifdir
+* dosya ya  önek ve sonek vermek içindir
+* */
+$Uploader->name_format (false,'st_','_nc');
+
+
 $Uploader->picture_control_value=true;//resimin gerçek olup olmadığını kontrol eçindir 
 
 $Uploader->uploader_set($input_names, $path, $allowed_types,$file_size);//çalıştırıcı

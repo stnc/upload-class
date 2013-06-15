@@ -148,8 +148,8 @@ class stnc_file_upload {
 
 
 	/**
-	 * dosyanın orginal isimde olup olmayagını kontrol eder
-	 *
+	 * dosyanın orginal isimde kayıt edilip edilmeyecegini bakar 
+	 * true ise orginal isimle kaydedilir
 	 * @access puplic
 	 * @var boolean
 	 */
@@ -234,7 +234,88 @@ class stnc_file_upload {
 		$this->upload_dir = $upload_dir;
 	}
 
-
+	/**
+	 * file cleaner 
+	 * temiz bir dosya ismi oluştuur turkce karekterlleri cevirir gereksizleri kaldırır
+	 * @access puplic
+	 * @param  string
+	 * @return string
+	 */
+	function clean_file_name($filename)
+	{
+		$bad = array(
+				"<!--",
+				"-->",
+				"'",
+				"<",
+				">",
+				'"',
+				'&',
+				'$',
+				'=',
+				';',
+				'?',
+				'/',
+				"%20",
+				"%22",
+				"%3c",		// <
+				"%253c",	// <
+				"%3e",		// >
+				"%0e",		// >
+				"%28",		// (
+				"%29",		// )
+				"%2528",	// (
+				"%26",		// &
+				"%24",		// $
+				"%3f",		// ?
+				"%3b",		// ;
+				"%3d"		// =
+		);
+	
+		$filename = str_replace($bad, '', $filename);
+	
+	
+		$specialLetters = array(
+				'a' => array('á','à','â','ä','ã'),
+				'A' => array('Ã','Ä','Â','À','Á'),
+				'e' => array('é','è','ê','ë'),
+				'E' => array('Ë','É','È','Ê'),
+				'i' => array('í','ì','î','ï','ı'),
+				'I' => array('Î','Í','Ì','İ','Ï'),
+				'o' => array('ó','ò','ô','ö','õ'),
+				'O' => array('Õ','Ö','Ô','Ò','Ó'),
+				'u' => array('ú','ù','û','ü'),
+				'U' => array('Ú','Û','Ù','Ü'),
+				'c' => array('ç'),
+				'C' => array('Ç'),
+				's' => array('ş'),
+				'S' => array('Ş'),
+				'n' => array('ñ'),
+				'N' => array('Ñ'),
+				'y' => array('ÿ'),
+				'Y' => array('Ÿ'),
+				'G' => array('Ğ'),
+				'g' => array('ğ')
+		);
+	
+		foreach($specialLetters as $letter => $specials){
+			foreach($specials as $s){
+				$filename = str_replace($s, $letter, $filename);
+			}
+		}
+	
+		$fd = explode('.', $filename);
+		$uzanti = strtolower(array_pop($fd));
+		array_push($fd, $uzanti);
+		$filename = implode('.', $fd);
+	
+	
+		return preg_replace("/[^a-zA-Z0-9\-\.]/", "_", stripslashes($filename));
+	}
+	
+	
+	
+	
 	/**
 	 * file Do the same name checks, generate random numbers
 	 *
@@ -242,7 +323,7 @@ class stnc_file_upload {
 	 * @param  array
 	 * @return string
 	 */
-	function file_name_control($file_name) {
+	 function file_name_control($file_name) {
 		$file_ext = $this->file_extension($file_name);
 		$randomize=rand(0001, 9999).'_'.rand(0001, 99999).'_'.rand(0001, 99999);
 		if ($this->orginal_name==false){
@@ -252,8 +333,8 @@ class stnc_file_upload {
 			 $result = $this->_prefix.$randomize.$this->suffix_.'.'.$file_ext;
 		}
 		else {
-			exit ('deneme');
-
+		
+			$result = $this->clean_file_name($file_name);
 		}
 
 
