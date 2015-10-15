@@ -32,13 +32,10 @@ echo  $Uploader->result_report(); //rapor hata vss
 
 //örnek yüklenenlerin isimlerini almak için 
 
-/* for ($i = 0; $i < count($input_names['name'][$i]); $i++){
-		if ( $Uploader->uploaded) {
-	echo	$Uploader->uploaded_files[$i];
-		} else {
-		echo  $Uploader->result_report();
-		}
-		}*/
+ 
+                for ($i = 0; $i < count($input_names['name']); $i ++) {
+                    $picture = $Uploader->uploaded_files[$i];
+                }
 }
 ?>
 
