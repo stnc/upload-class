@@ -221,12 +221,12 @@ class stnc_file_upload {
 	function upload_dir($upload_dir) {
 		// dizin var mi?
 
-		if (!is_dir($upload_dir)) {
-			$this->error .= $upload_dir.$this->LNG_4;
-		}
-		else {
-			@mkdir($upload_dir, 0777, true); //linux permisson problem?????
-		}
+	  // dizin var mi?
+        if (! file_exists($upload_dir)) {
+            $this->error .= $upload_dir . $this->LNG_4;
+        } /*else {
+          //  @mkdir($upload_dir, 0777, true); // linux permisson problem?????
+        }*/
 
 		if ( !is_writable($upload_dir)) {
 			$this->error .= $upload_dir.$this->LNG_5;
