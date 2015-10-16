@@ -32,11 +32,11 @@ echo  $Uploader->result_report(); //rapor hata vss
 
 //örnek yüklenenlerin isimlerini almak için 
 
- 
+      if (count($_FILES['uploadPic']['name'])>0) { //eğer herhangi bir resim yuklenmişse 
                 for ($i = 0; $i < count($input_names['name']); $i ++) {
                     $picture = $Uploader->uploaded_files[$i];
                 }
-}
+} }
 ?>
 
 <form action="" method="post" enctype="multipart/form-data">
